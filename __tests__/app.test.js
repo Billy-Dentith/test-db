@@ -166,3 +166,34 @@ describe('/api/articles/:article_id/comments', () => {
         })
     })
 })
+
+describe('/api/articles/:article_id/comments', () => {
+    test('POST 201: Should return the posted comment', () => {
+        const newComment = {
+            body: 'I love pugs',
+            username: 'lurker'
+        };
+        return request(app)
+        .post('/api/articles/3/comments')
+        .send(newComment)
+        .expect(201)
+        .then(({ body: { comment }})=> {
+            expect(comment.author).toBe("lurker")
+            expect(comment.body).toBe("I love pugs")
+            expect(comment.votes).toBe(0)
+            expect(comment.article_id).toBe(3)
+        })
+    })
+    test('GET 400: Should return an appropriate status and error message when passed provided with a bad comment (no comment body)', () => {
+        const newComment = {
+            username: 'lurker'
+        }
+        return request(app)
+        .post('/api/articles/3/comments')
+        .send(newComment)
+        .expect(400)
+        .then(({ body: { message }}) => {
+            expect(message).toBe('Bad Request')
+        })
+    })
+})
