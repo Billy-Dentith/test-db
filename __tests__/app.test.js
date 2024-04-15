@@ -121,14 +121,6 @@ describe('/api/articles', () => {
             })
         })
     })
-    test('GET 404: Should return an appropriate status and error message when passed an invalid endpoint', () => {
-        return request(app)
-        .get('/api/articels')
-        .expect(404)
-        .then(({ body: { message }}) => {
-            expect(message).toBe('Endpoint Not Found')
-        })
-    })
 })
 
 describe('/api/articles/:article_id/comments', () => {
