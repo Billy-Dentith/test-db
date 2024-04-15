@@ -91,3 +91,42 @@ describe('/api/articles/:article_id', () => {
         })
     })
 })
+
+describe('/api/articles', () => {
+    test('GET 200: Should return an array of all the articles', () => {
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(({ body: { articles }}) => {
+            expect(articles.length).toBe(13)
+            articles.forEach((article) => {
+                expect(article).toHaveProperty('author')
+                expect(article).toHaveProperty('title')
+                expect(article).toHaveProperty('article_id')
+                expect(article).toHaveProperty('topic')
+                expect(article).toHaveProperty('created_at')
+                expect(article).toHaveProperty('votes')
+                expect(article).toHaveProperty('article_img_url')
+                expect(article).toHaveProperty('comment_count')
+            })
+        })
+    })
+    test('GET 200: Should return the array sorted by date in descending order', () => {
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(({ body: { articles }}) => {
+            expect(articles).toBeSortedBy('created_at', { 
+                descending: true
+            })
+        })
+    })
+    test('GET 404: Should return an appropriate status and error message when passed an invalid endpoint', () => {
+        return request(app)
+        .get('/api/articels')
+        .expect(404)
+        .then(({ body: { message }}) => {
+            expect(message).toBe('Endpoint Not Found')
+        })
+    })
+})
