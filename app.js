@@ -1,5 +1,6 @@
 const express = require('express');
-const { getAllTopics, getHealthCheck } = require('./controllers/controllers');
+const { getHealthCheck, getEndpoints } = require('./controllers/app.controllers');
+const { getAllTopics } = require('./controllers/topics.controllers')
 const app = express();
 
 app.use(express.json());
@@ -8,6 +9,8 @@ app.use(express.json());
 app.get('/api/healthcheck', getHealthCheck);
 
 app.get('/api/topics', getAllTopics);
+
+app.get('/api', getEndpoints);
 
 // Requests to Invalid Endpoints 
 app.all('*', (req, res, next) => {
