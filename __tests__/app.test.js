@@ -248,3 +248,27 @@ describe('/api/articles/:article_id', () => {
         })
     })
 })
+
+describe('/api/comments/:comment_id', () => {
+    test('DELETE 204: Should delete the comment based on provided ID', () => {
+        return request(app)
+        .delete('/api/comments/1')
+        .expect(204)
+    })
+    test('DELETE 404: Should return an appropriate status and error message when provided a valid but non-existent article ID', () => {
+        return request(app)
+        .delete('/api/comments/9999')
+        .expect(404)
+        .then(({ body: { message }}) => {
+            expect(message).toBe('Article Does Not Exist')
+        })
+    })
+    test('DELETE 400: Should return an appropriate status and error message when provided an invalid article ID', () => {
+        return request(app)
+        .delete('/api/comments/invalid_id')
+        .expect(400)
+        .then(({ body: { message }}) => {
+            expect(message).toBe('Bad Request')
+        })
+    })
+})

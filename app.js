@@ -2,7 +2,7 @@ const express = require('express');
 const { getHealthCheck, getEndpoints } = require('./controllers/app.controllers');
 const { getAllTopics } = require('./controllers/topics.controllers');
 const { getArticleById, getAllArticles, patchArticleById } = require('./controllers/articles.controllers');
-const { getCommentsByArticleId, postComment } = require('./controllers/comments.controllers');
+const { getCommentsByArticleId, postComment, deleteCommentById } = require('./controllers/comments.controllers');
 const app = express();
 
 app.use(express.json());
@@ -21,6 +21,8 @@ app.get('/api/articles', getAllArticles);
 
 app.get('/api/articles/:article_id/comments', getCommentsByArticleId);
 app.post('/api/articles/:article_id/comments', postComment);
+
+app.delete('/api/comments/:comment_id', deleteCommentById)
 
 // Requests to Invalid Endpoints 
 app.all('*', (req, res, next) => {
