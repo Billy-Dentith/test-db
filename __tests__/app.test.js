@@ -151,6 +151,14 @@ describe('/api/articles', () => {
             })
         })
     })
+    test('GET 200: Should return an empty array if provided a valid topic query that has no articles', () => {
+        return request(app)
+        .get('/api/articles?topic=paper')
+        .expect(200)
+        .then(({ body: { articles }}) => {
+            expect(articles.length).toBe(0);
+        })
+    })
     test('GET 404: Should return an appropriate status and error message if provided an invalid query', () => {
         return request(app)
         .get('/api/articles?topic=food')
@@ -332,15 +340,15 @@ describe('/api/comments/:comment_id', () => {
         .delete('/api/comments/1')
         .expect(204)
     })
-    test('DELETE 404: Should return an appropriate status and error message when provided a valid but non-existent article ID', () => {
+    test('DELETE 404: Should return an appropriate status and error message when provided a valid but non-existent comment ID', () => {
         return request(app)
         .delete('/api/comments/9999')
         .expect(404)
         .then(({ body: { message }}) => {
-            expect(message).toBe('Article Does Not Exist')
+            expect(message).toBe('Comment Does Not Exist')
         })
     })
-    test('DELETE 400: Should return an appropriate status and error message when provided an invalid article ID', () => {
+    test('DELETE 400: Should return an appropriate status and error message when provided an invalid comment ID', () => {
         return request(app)
         .delete('/api/comments/invalid_id')
         .expect(400)
