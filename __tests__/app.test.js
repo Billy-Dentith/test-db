@@ -209,7 +209,7 @@ describe('/api/articles/:article_id/comments', () => {
 })
 
 describe('/api/articles/:article_id', () => {
-    test('PATCH 202: Should update an article by ID and return the updated article', () => {
+    test('PATCH 202: Should update an article by ID and return the updated article (postive vote incrementations)', () => {
         const updArticle = {
             inc_votes: 10
         }
@@ -221,6 +221,20 @@ describe('/api/articles/:article_id', () => {
             expect(article.article_id).toBe(1)
             expect(article.title).toBe("Living in the shadow of a great man")
             expect(article.votes).toBe(110)
+        })
+    })
+    test('PATCH 202: Should update an article by ID and return the updated article (negative vote incrementations)', () => {
+        const updArticle = {
+            inc_votes: -10
+        }
+        return request(app)
+        .patch('/api/articles/1')
+        .send(updArticle)
+        .expect(202)
+        .then(({ body: { article }}) => {
+            expect(article.article_id).toBe(1)
+            expect(article.title).toBe("Living in the shadow of a great man")
+            expect(article.votes).toBe(90)
         })
     })
     test('PATCH 400: Should return an appropriate status and error message when provided with a bad body (missing required field / incorrect field)', () => {
@@ -235,7 +249,19 @@ describe('/api/articles/:article_id', () => {
             expect(message).toBe('Bad Request')
         })
     })
-    test('PATCH 404: Should return an appropriate status and error message when provided with an invalid article ID', () => {
+    test('PATCH 400: Should return an appropriate status and error message when provided an invalid article ID', () => {
+        const updArticle = {
+            inc_votes: 10
+        }
+        return request(app)
+        .patch('/api/articles/invalid_id')
+        .send(updArticle)
+        .expect(400)
+        .then(({ body: { message }}) => {
+            expect(message).toBe('Bad Request')
+        })
+    })
+    test('PATCH 404: Should return an appropriate status and error message when provided a valid but non-existent article ID', () => {
         const updArticle = {
             inc_votes: 10
         }
