@@ -8,9 +8,10 @@ exports.getArticleById = (req, res, next) => {
 }
 
 exports.getAllArticles = (req, res, next) => {
-    getAllArticlesData().then((articles) => {
+    const { topic } = req.query; 
+    getAllArticlesData(topic).then((articles) => {
         res.status(200).send({ articles })
-    })
+    }).catch(next)
 }
 
 exports.patchArticleById = (req, res, next) => {
