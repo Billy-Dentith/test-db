@@ -34,7 +34,7 @@ exports.removeCommentById = (comment_id) => {
         [comment_id])
         .then(({ rows }) => {
             if (rows.length === 0) {
-                return Promise.reject({ status: 404, message: 'Article Does Not Exist'})
+                return Promise.reject({ status: 404, message: 'Comment Does Not Exist'})
             }
         })
 }

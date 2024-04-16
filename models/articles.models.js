@@ -1,5 +1,5 @@
-const { promises } = require('supertest/lib/test');
 const db = require('../db/connection');
+const { selectTopics } = require('./topics.models');
 
 exports.getArticleDataById = (article_id) => {
     const sqlString = `SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.body, articles.created_at, articles.votes, articles.article_img_url,
@@ -20,32 +20,36 @@ exports.getArticleDataById = (article_id) => {
 }
 
 exports.getAllArticlesData = (topic) => {
-    const validTopics = ['cats', 'mitch', 'paper']
+    return selectTopics().then((topicsArray) => {
+        const validTopics = topicsArray.map((topics) => {
+            return topics.slug;
+        })
 
-    let sqlString = `
-    SELECT articles.article_id, articles.title, articles.author, articles.topic, articles.created_at, articles.votes, articles.article_img_url,
-    COUNT(comments.article_id)::int AS comment_count
-    FROM articles
-    LEFT JOIN comments
-    ON articles.article_id = comments.article_id `;
-    const queryVals = []; 
+        let sqlString = `
+        SELECT articles.article_id, articles.title, articles.author, articles.topic, articles.created_at, articles.votes, articles.article_img_url,
+        COUNT(comments.article_id)::int AS comment_count
+        FROM articles
+        LEFT JOIN comments
+        ON articles.article_id = comments.article_id `;
+        const queryVals = []; 
 
-    if (topic) {
-        if (validTopics.includes(topic)) {
-            sqlString += `WHERE topic=$1 `;
-            queryVals.push(topic);
-        } else {
-            return Promise.reject({ status: 404, message: 'Invalid Query'})
+        if (topic) {
+            if (validTopics.includes(topic)) {
+                sqlString += `WHERE topic=$1 `;
+                queryVals.push(topic);
+            } else {
+                return Promise.reject({ status: 404, message: 'Invalid Query'})
+            }
         }
-    }
 
-    sqlString += `
-    GROUP BY articles.article_id
-    ORDER BY created_at DESC;`
+        sqlString += `
+        GROUP BY articles.article_id
+        ORDER BY created_at DESC;`
 
-    return db.query(sqlString, queryVals)
-    .then(({ rows }) => {
-        return rows;
+        return db.query(sqlString, queryVals)
+        .then(({ rows }) => {
+            return rows;
+        })
     })
 }
 
