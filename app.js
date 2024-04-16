@@ -1,7 +1,7 @@
 const express = require('express');
 const { getHealthCheck, getEndpoints } = require('./controllers/app.controllers');
 const { getAllTopics } = require('./controllers/topics.controllers');
-const { getArticleById, getAllArticles } = require('./controllers/articles.controllers');
+const { getArticleById, getAllArticles, patchArticleById } = require('./controllers/articles.controllers');
 const { getCommentsByArticleId, postComment } = require('./controllers/comments.controllers');
 const app = express();
 
@@ -15,11 +15,12 @@ app.get('/api/topics', getAllTopics);
 app.get('/api', getEndpoints);
 
 app.get('/api/articles/:article_id', getArticleById);
+app.patch('/api/articles/:article_id', patchArticleById);
 
 app.get('/api/articles', getAllArticles);
 
-app.get('/api/articles/:article_id/comments', getCommentsByArticleId)
-app.post('/api/articles/:article_id/comments', postComment)
+app.get('/api/articles/:article_id/comments', getCommentsByArticleId);
+app.post('/api/articles/:article_id/comments', postComment);
 
 // Requests to Invalid Endpoints 
 app.all('*', (req, res, next) => {
