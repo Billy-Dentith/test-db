@@ -13,7 +13,7 @@ exports.getCommentsByArticleIdData = (article_id) => {
     })
 }
 
-exports.insertComment = ({ body, username }, article_id) => {
+exports.insertComment = (body, username, article_id) => {
     const queryStr = `
     INSERT INTO comments
         (body, author, article_id)

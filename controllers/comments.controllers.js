@@ -1,5 +1,6 @@
 const { checkArticleExists } = require("../models/articles.models")
 const { getCommentsByArticleIdData, insertComment, removeCommentById } = require("../models/comments.models")
+const { checkUserExists } = require("../models/users.models")
 
 exports.getCommentsByArticleId = (req, res, next) => {
     const article_id = req.params.article_id
@@ -11,10 +12,14 @@ exports.getCommentsByArticleId = (req, res, next) => {
 }
 
 exports.postComment = (req, res, next) => {
-    const newComment = req.body 
+    const { body, username } = req.body 
     const article_id = req.params.article_id
-    insertComment(newComment, article_id).then((comment) => {
-        res.status(201).send({ comment })
+
+    checkUserExists(username).then(() => {
+        insertComment(body, username, article_id)
+        .then((comment) => {
+            res.status(201).send({ comment })
+        }).catch(next)
     }).catch(next)
 }
 
