@@ -100,14 +100,16 @@ describe('/api/articles', () => {
         .then(({ body: { articles }}) => {
             expect(articles.length).toBe(13)
             articles.forEach((article) => {
-                expect(article).toHaveProperty('author')
-                expect(article).toHaveProperty('title')
-                expect(article).toHaveProperty('article_id')
-                expect(article).toHaveProperty('topic')
-                expect(article).toHaveProperty('created_at')
-                expect(article).toHaveProperty('votes')
-                expect(article).toHaveProperty('article_img_url')
-                expect(article).toHaveProperty('comment_count')
+                expect(article).toMatchObject({
+                    article_id: expect.any(Number),
+                    title: expect.any(String),
+                    topic: expect.any(String),
+                    author: expect.any(String),
+                    created_at: expect.any(String),
+                    article_img_url: expect.any(String),
+                    votes: expect.any(Number),
+                    comment_count: expect.any(Number)
+                })
             })
         })
     })
@@ -119,6 +121,25 @@ describe('/api/articles', () => {
             expect(articles).toBeSortedBy('created_at', { 
                 descending: true
             })
+        })
+    })
+    test('GET 200: Should return an array of articles that meet the provided query of topic', () => {
+        return request(app)
+        .get('/api/articles?topic=cats')
+        .expect(200)
+        .then(({ body: { articles }}) => {
+            expect(articles.length).toBe(1);
+            articles.forEach((article) => {
+                expect(article.topic).toBe('cats')
+            })
+        })
+    })
+    test('GET 404: Should return an appropriate status and error message if provided an invalid query', () => {
+        return request(app)
+        .get('/api/articles?topic=food')
+        .expect(404)
+        .then(({ body: { message }}) => {
+            expect(message).toBe('Invalid Query')
         })
     })
 })
