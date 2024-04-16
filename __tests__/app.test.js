@@ -160,7 +160,7 @@ describe('/api/articles/:article_id/comments', () => {
             expect(comments.length).toBe(0)
         })
     })
-    test('GET 404: Should return an appropriate status and error message when passed a valid but non existent id', () => {
+    test('GET 404: Should return an appropriate status and error message when provided a valid but non existent id', () => {
         return request(app)
         .get('/api/articles/9999/comments')
         .expect(404)
@@ -168,7 +168,7 @@ describe('/api/articles/:article_id/comments', () => {
             expect(message).toBe('Article Does Not Exist')
         })
     })
-    test('GET 400: Should return an appropriate status and error message when passed an invalid id', () => {
+    test('GET 400: Should return an appropriate status and error message when provided an invalid id', () => {
         return request(app)
         .get('/api/articles/invalid_id/comments')
         .then(({ body: { message }}) => {
@@ -194,7 +194,7 @@ describe('/api/articles/:article_id/comments', () => {
             expect(comment.article_id).toBe(3)
         })
     })
-    test('GET 400: Should return an appropriate status and error message when passed provided with a bad comment (no comment body)', () => {
+    test('POST 400: Should return an appropriate status and error message when provided with a bad comment (no comment body)', () => {
         const newComment = {
             username: 'lurker'
         }
@@ -204,6 +204,19 @@ describe('/api/articles/:article_id/comments', () => {
         .expect(400)
         .then(({ body: { message }}) => {
             expect(message).toBe('Bad Request')
+        })
+    })
+    test('POST 404: Should return an appropriate status and error message when provided with an invalid username', () => {
+        const newComment = {
+            body: 'I love pugs',
+            username: 'invalid_user'
+        }
+        return request(app)
+        .post('/api/articles/3/comments')
+        .send(newComment)
+        .expect(404)
+        .then(({ body: { message }}) => {
+            expect(message).toBe('User Does Not Exist')
         })
     })
 })
